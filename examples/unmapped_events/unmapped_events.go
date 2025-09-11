@@ -37,7 +37,7 @@ func main() {
 	)
 
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	for msg := range rtm.IncomingEvents {
 		switch ev := msg.Data.(type) {

@@ -45,7 +45,7 @@ func TestRTMBeforeEvents(t *testing.T) {
 		}
 	}()
 	go rtm.Disconnect()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	select {
 	case <-done:
 	case <-time.After(5 * time.Second):
@@ -78,7 +78,7 @@ func TestRTMGoodbye(t *testing.T) {
 	)
 
 	done := make(chan struct{})
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	connected := 0
 	disconnected := 0
 	func() {
@@ -134,7 +134,7 @@ func TestRTMDeadConnection(t *testing.T) {
 		slack.RTMOptionPingInterval(100 * time.Millisecond),
 	)
 
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	done := make(chan struct{})
 	connected := 0
 	disconnected := 0
@@ -174,7 +174,7 @@ func TestRTMDisconnect(t *testing.T) {
 	// actually connect to slack here w/ an invalid token
 	api := slack.New(testToken)
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	// Observe incoming messages.
 	done := make(chan struct{})
@@ -226,7 +226,7 @@ func TestRTMConnectRateLimit(t *testing.T) {
 	// Setup and start the RTM.
 	api := slack.New(testToken, slack.OptionAPIURL(testServer.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	// Observe incoming failures
 	connectionFailure := make(chan *slack.ConnectionErrorEvent)
@@ -266,7 +266,7 @@ func TestRTMSingleConnect(t *testing.T) {
 	// Setup and start the RTM.
 	api := slack.New(testToken, slack.OptionAPIURL(testServer.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	// Observe incoming messages.
 	done := make(chan struct{})
@@ -325,7 +325,7 @@ func TestRTMUnmappedError(t *testing.T) {
 	// Setup and start the RTM.
 	api := slack.New(testToken, slack.OptionAPIURL(testServer.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	// Observe incoming messages.
 	done := make(chan struct{})

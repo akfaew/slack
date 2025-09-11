@@ -30,7 +30,7 @@ func main() {
 	)
 
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	fmt.Println("Listening for call/huddle events... start a call in a channel where this bot is present.")
 

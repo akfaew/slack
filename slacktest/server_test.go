@@ -83,7 +83,7 @@ func TestGetSeenInboundMessages(t *testing.T) {
 
 	api := slack.New("ABCDEFG", slack.OptionAPIURL(s.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	rtm.SendMessage(&slack.OutgoingMessage{
 		Channel: "foo",
 		Text:    "should see this inbound message",
@@ -110,7 +110,7 @@ func TestSendChannelInvite(t *testing.T) {
 	s := NewTestServer()
 	s.Start()
 	rtm := s.GetTestRTMInstance()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	evChan := make(chan (slack.Channel), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {
@@ -139,7 +139,7 @@ func TestSendGroupInvite(t *testing.T) {
 	s := NewTestServer()
 	s.Start()
 	rtm := s.GetTestRTMInstance()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	evChan := make(chan (slack.Channel), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {

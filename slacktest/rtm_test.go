@@ -16,7 +16,7 @@ func TestRTMInfo(t *testing.T) {
 
 	api := slack.New("ABCDEFG", slack.OptionAPIURL(s.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	messageChan := make(chan (*slack.ConnectedEvent), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {
@@ -47,7 +47,7 @@ func TestRTMPing(t *testing.T) {
 
 	api := slack.New("ABCDEFG", slack.OptionAPIURL(s.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	messageChan := make(chan (*slack.LatencyReport), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {
@@ -75,7 +75,7 @@ func TestRTMDirectMessage(t *testing.T) {
 
 	api := slack.New("ABCDEFG", slack.OptionAPIURL(s.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	messageChan := make(chan (*slack.MessageEvent), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {
@@ -104,7 +104,7 @@ func TestRTMChannelMessage(t *testing.T) {
 
 	api := slack.New("ABCDEFG", slack.OptionAPIURL(s.GetAPIURL()))
 	rtm := api.NewRTM()
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 	messageChan := make(chan (*slack.MessageEvent), 1)
 	go func() {
 		for msg := range rtm.IncomingEvents {

@@ -54,7 +54,7 @@ func (u UnmappedError) Error() string {
 // behavior.
 //
 // The defined error events are located in websocket_internals.go.
-func (rtm *RTM) ManageConnection() {
+func (rtm *RTM) ManageConnection(key, cookie string) {
 	var (
 		err  error
 		info *Info
@@ -64,7 +64,7 @@ func (rtm *RTM) ManageConnection() {
 	for connectionCount := 0; ; connectionCount++ {
 		// start trying to connect
 		// the returned err is already passed onto the IncomingEvents channel
-		if info, conn, err = rtm.connect(connectionCount, rtm.useRTMStart); err != nil {
+		if info, conn, err = rtm.connect(connectionCount, rtm.useRTMStart, key, cookie); err != nil {
 			// when the connection is unsuccessful its fatal, and we need to bail out.
 			rtm.Debugf("Failed to connect with RTM on try %d: %s", connectionCount, err)
 			rtm.disconnect()
@@ -110,7 +110,7 @@ func (rtm *RTM) ManageConnection() {
 // has been successfully opened.
 // If useRTMStart is false then it uses rtm.connect to create the connection,
 // otherwise it uses rtm.start.
-func (rtm *RTM) connect(connectionCount int, useRTMStart bool) (*Info, *websocket.Conn, error) {
+func (rtm *RTM) connect(connectionCount int, useRTMStart bool, key, cookie string) (*Info, *websocket.Conn, error) {
 	const (
 		errInvalidAuth      = "invalid_auth"
 		errInactiveAccount  = "account_inactive"
@@ -136,7 +136,7 @@ func (rtm *RTM) connect(connectionCount int, useRTMStart bool) (*Info, *websocke
 		}}
 
 		// attempt to start the connection
-		info, conn, err := rtm.startRTMAndDial(useRTMStart)
+		info, conn, err := rtm.startRTMAndDial(useRTMStart, key, cookie)
 		if err == nil {
 			return info, conn, nil
 		}
@@ -193,7 +193,7 @@ func (rtm *RTM) connect(connectionCount int, useRTMStart bool) (*Info, *websocke
 // startRTMAndDial attempts to connect to the slack websocket. If useRTMStart is true,
 // then it returns the  full information returned by the "rtm.start" method on the
 // slack API. Else it uses the "rtm.connect" method to connect
-func (rtm *RTM) startRTMAndDial(useRTMStart bool) (info *Info, _ *websocket.Conn, err error) {
+func (rtm *RTM) startRTMAndDial(useRTMStart bool, key, cookie string) (info *Info, _ *websocket.Conn, err error) {
 	var (
 		url string
 	)
@@ -222,6 +222,11 @@ func (rtm *RTM) startRTMAndDial(useRTMStart bool) (info *Info, _ *websocket.Conn
 	// Only use HTTPS for connections to prevent MITM attacks on the connection.
 	upgradeHeader := http.Header{}
 	upgradeHeader.Add("Origin", "https://api.slack.com")
+	if len(key) > 0 {
+		upgradeHeader.Add("user-agent", "slack-go")
+		upgradeHeader.Add("Authorization", "Bearer "+key)
+		upgradeHeader.Add("Cookie", "d="+cookie)
+	}
 	dialer := websocket.DefaultDialer
 	if rtm.dialer != nil {
 		dialer = rtm.dialer

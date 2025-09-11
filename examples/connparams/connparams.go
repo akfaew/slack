@@ -51,7 +51,7 @@ func main() {
 	rtm := api.NewRTM(slack.RTMOptionConnParams(url.Values{
 		"batch_presence_aware": {"1"},
 	}))
-	go rtm.ManageConnection()
+	go rtm.ManageConnection("", "")
 
 	for msg := range rtm.IncomingEvents {
 		fmt.Print("Event Received: ")
